@@ -320,13 +320,3 @@ Golang具有一个`scope`的概念，即源文件的`scope`，其中标识符表
 ## ast.SelectorExpr
 
 - `ast.SelectorExpr`表示一个带有选择器的表达式
-
-**
-
-2人点赞**
-
-**
-
-**go base
-
-**
