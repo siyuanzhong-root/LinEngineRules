@@ -1,0 +1,28 @@
+[
+  {
+    "rule_id": "1",
+    "rule_name": "规则1",
+    "rule_expr": "tmp > 20.0 && sf6 < 30.2",
+    "rule_status": "1",
+    "rule_detail": [
+      {
+        "rule_source": "/v1/ai/data-01223",
+        "rule_attr": ["tmp","sf6"]
+      }
+    ],
+    "rule_handle": []
+  },
+  {
+    "rule_id": "2",
+    "rule_name": "规则2",
+    "rule_expr": "`tmp > 10 && sf6 < 30`",
+    "rule_status": "1",
+    "rule_detail": [
+      {
+        "rule_source": "/v1/ai/data-0123223",
+        "rule_attr": ["tmp","sf6"]
+      }
+    ],
+    "rule_handle": []
+  }
+]
