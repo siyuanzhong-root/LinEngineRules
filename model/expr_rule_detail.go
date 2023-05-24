@@ -19,10 +19,11 @@ type RuleDetail struct {
 	IsAsync          int    `gorm:"column:is_async" json:"is_async"`
 	SourceDeviceAttr string `gorm:"column:source_device_attr" json:"source_device_attr"`
 	HandleName       string `gorm:"column:handle_name" json:"handle_name"`
-	Timestamp        string `gorm:"timestamp" json:"timestamp"`
-	SuccessCount     int    `gorm:"success_count" json:"success_count"`
-	FailedCount      int    `gorm:"failed_count" json:"failed_count"`
+	Timestamp        string `gorm:"column:timestamp" json:"timestamp"`
+	SuccessCount     int    `gorm:"column:success_count" json:"success_count"`
+	FailedCount      int    `gorm:"column:failed_count" json:"failed_count"`
 	HandleDetail     string `gorm:"column:handle_detail" json:"handle_detail"`
+	ViewJson         string `gorm:"column:view_json" json:"view_json"`
 }
 
 // TableName 返回规则表表名
@@ -76,4 +77,13 @@ func (r *RuleDetail) Insert() error {
 // Delete 删除规则
 func (r *RuleDetail) Delete() error {
 	return initdata.EngineDB.Table(r.TableName()).Delete(r).Error
+}
+
+// QueryRuleByID 根据ID查询规则
+func (r *RuleDetail) QueryRuleByID() RuleDetail {
+	var result RuleDetail
+	if err := initdata.EngineDB.Table(r.TableName()).Where("id = ?", r.ID).Find(&result).Error; err != nil {
+		return RuleDetail{}
+	}
+	return result
 }

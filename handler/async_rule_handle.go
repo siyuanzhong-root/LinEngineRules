@@ -22,7 +22,7 @@ func AsyncRuleHandle(detail model.RuleDetail, msg types.AppNoticeMsg, topic stri
 	ruleArray := utils.HandleReturnFullResult(detail.SourceDeviceAttr)
 	var ifMarchDevice = false
 	for i := range ruleArray {
-		if strings.Contains(ruleArray[i], "-") && dataIfInRule(ruleArray[i], msg, topic) {
+		if strings.Contains(ruleArray[i], "#") && dataIfInRule(ruleArray[i], msg, topic) {
 			ifMarchDevice = true
 		}
 	}
@@ -58,7 +58,7 @@ func getAllDevSNByRule(ruleDetail model.RuleDetail) bool {
 	allDetail := utils.SpiltByDefineStr(ruleDetail.SourceDeviceAttr)
 	var flag = false
 	for _, detail := range allDetail {
-		sourceDeviceAttr := strings.Split(detail, "-")
+		sourceDeviceAttr := strings.Split(detail, "#")
 		//规则设备SN信息
 		ruleDevice := sourceDeviceAttr[1]
 		//规则设备属性信息
@@ -90,16 +90,18 @@ func getAllDevSNByRule(ruleDetail model.RuleDetail) bool {
 
 // asyncExecute 同步处理器处理规则信息
 func asyncExecute(ruleDetail model.RuleDetail, sDA string, msg types.AppNoticeMsg, topic string) bool {
-	sourceDeviceAttr := strings.Split(sDA, "-")
+	sourceDeviceAttr := strings.Split(sDA, "#")
 	//规则数据源信息
 	ruleTopic := sourceDeviceAttr[0]
+	key := strings.Split(ruleTopic, "/")
+
 	//规则设备SN信息
 	ruleDevice := sourceDeviceAttr[1]
 	//规则设备属性信息
 	ruleAttr := sourceDeviceAttr[2]
 	// 数据运行结果表达
 	var flag = false
-	if topic == ruleTopic {
+	if strings.Contains(topic, key[len(key)-1]) {
 		if msg.DevSN == ruleDevice {
 			_, ok := msg.Param[ruleAttr]
 			if ok {

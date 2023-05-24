@@ -1,0 +1,9 @@
+FROM  arm64v8/alpine:3.14
+VOLUME /database
+WORKDIR /siyuanzhong/engine
+ADD engineserver1.0 /siyuanzhong/engine
+ENV SERVER_PORT 10080
+ENV MQTT_BROKER tcp://192.168.8.251:1883
+ENV DATABASE_DIR /database
+EXPOSE 10080
+CMD ["/siyuanzhong/engine/engineserver1.0"]

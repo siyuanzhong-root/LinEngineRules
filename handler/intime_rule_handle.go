@@ -20,13 +20,14 @@ CREATE_BY:GoLand.LinEngineRules
 func InTimeHandle(detail model.RuleDetail, msg types.AppNoticeMsg, topic string) {
 	ruleArray := utils.HandleReturnFullResult(detail.SourceDeviceAttr)
 	for i := range ruleArray {
-		if !dataIfInRule(ruleArray[i], msg, topic) {
-			return
+		if strings.Contains(ruleArray[i], "#") {
+			if !dataIfInRule(ruleArray[i], msg, topic) {
+				return
+			}
 		}
 	}
 	var flag bool
 	if len(ruleArray) == constants.SingleRuleExpr {
-		log.Println("进入单条件方法", ruleArray[0], msg, topic)
 		flag = inTimeExecute(ruleArray[0], msg, topic)
 	}
 	if len(ruleArray) >= constants.MultiRuleExpr {
@@ -51,9 +52,10 @@ func InTimeHandle(detail model.RuleDetail, msg types.AppNoticeMsg, topic string)
 
 // inTimeExecute 同步处理器处理规则信息
 func inTimeExecute(sDA string, msg types.AppNoticeMsg, topic string) bool {
-	sourceDeviceAttr := strings.Split(sDA, "-")
+	sourceDeviceAttr := strings.Split(sDA, "#")
 	//规则数据源信息
 	ruleTopic := sourceDeviceAttr[0]
+	key := strings.Split(ruleTopic, "/")
 	//规则设备SN信息
 	ruleDevice := sourceDeviceAttr[1]
 	//规则设备属性信息
@@ -64,7 +66,7 @@ func inTimeExecute(sDA string, msg types.AppNoticeMsg, topic string) bool {
 	ruleData := sourceDeviceAttr[4]
 	//数据运行结果表达
 	var flag = false
-	if topic == ruleTopic {
+	if strings.Contains(topic, key[len(key)-1]) {
 		if msg.DevSN == ruleDevice {
 			reportData, ok := msg.Param[ruleAttr]
 			if ok {
@@ -78,15 +80,15 @@ func inTimeExecute(sDA string, msg types.AppNoticeMsg, topic string) bool {
 
 // dataIfInRule 判断消息数据是否匹配规则
 func dataIfInRule(sDA string, msg types.AppNoticeMsg, topic string) bool {
-	sourceDeviceAttr := strings.Split(sDA, "-")
+	sourceDeviceAttr := strings.Split(sDA, "#")
 	//规则数据源信息
 	ruleTopic := sourceDeviceAttr[0]
+	key := strings.Split(ruleTopic, "/")
 	//规则设备SN信息
 	ruleDevice := sourceDeviceAttr[1]
 	//规则设备属性信息
 	ruleAttr := sourceDeviceAttr[2]
-	//数据运行结果表达
-	if topic == ruleTopic {
+	if strings.Contains(topic, key[len(key)-1]) {
 		if msg.DevSN == ruleDevice {
 			_, ok := msg.Param[ruleAttr]
 			if ok {

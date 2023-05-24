@@ -45,7 +45,13 @@ func DetermineResultByStr(ruleData, expr, reportData string) bool {
 		if reData >= ruData {
 			return true
 		}
+
+	case "!=":
+		if reData != ruData {
+			return true
+		}
 	}
+
 	return false
 }
 

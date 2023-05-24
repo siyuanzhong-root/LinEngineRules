@@ -3,6 +3,7 @@ package model
 import (
 	"LinEngineRules/initdata"
 	"log"
+	"time"
 )
 
 /**
@@ -46,4 +47,15 @@ func (e *ExprRuleRecord) PageRuleDetail(offset, limit int, name string) (result 
 		return []ExprRuleRecord{}, 0
 	}
 	return exprRuleRecord, number
+}
+
+// DeleteByName 删除规则记录
+func (e *ExprRuleRecord) DeleteByName() error {
+	return initdata.EngineDB.Table(e.TableName()).Where("name = ?", e.Name).Delete(ExprRuleRecord{}).Error
+}
+
+// DeleteExpiredByName 删除规则记录
+func (e *ExprRuleRecord) DeleteExpiredByName() error {
+	expiredTime := time.Now().AddDate(0, 0, -30)
+	return initdata.EngineDB.Table(e.TableName()).Where("trigger_time < ?", expiredTime).Delete(ExprRuleRecord{}).Error
 }

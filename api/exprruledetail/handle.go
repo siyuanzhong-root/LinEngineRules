@@ -70,6 +70,13 @@ func UpdateRuleDetail(req *restful.Request, resp *restful.Response) {
 func DeleteRuleDetail(req *restful.Request, resp *restful.Response) {
 	var ruleDetail model.RuleDetail
 	err := req.ReadEntity(&ruleDetail)
+	existRule := ruleDetail.QueryRuleByID()
+	log.Println("获取到existrule是", existRule)
+	var record = model.ExprRuleRecord{Name: existRule.Name}
+	err = record.DeleteByName()
+	if err != nil {
+		log.Println("删除规则记录信息出错")
+	}
 	if err != nil {
 		log.Println("删除获取规则详情入参失败", err)
 		utils.RespErrWithData(resp, "删除获取规则详情入参失败"+err.Error())
@@ -81,6 +88,7 @@ func DeleteRuleDetail(req *restful.Request, resp *restful.Response) {
 		utils.RespErrWithData(resp, "删除规则数据出错"+err.Error())
 		return
 	}
+
 	utils.RespOKWithData(resp, "删除成功")
 }
 

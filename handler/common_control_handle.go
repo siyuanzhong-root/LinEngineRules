@@ -23,7 +23,7 @@ CREATE_BY:GoLand.LinEngineRules
 func CommonControlHandle(handleDetail string) error {
 	controlInfo := strings.Split(handleDetail, ",")
 	for _, cd := range controlInfo {
-		controlDetail := strings.Split(cd, "-")
+		controlDetail := strings.Split(cd, "#")
 		controlLink := controlDetail[0]
 		controlDevice := controlDetail[1]
 		controlType := controlDetail[2]
@@ -82,8 +82,12 @@ func updateRecordAndResult(flag bool, detail model.RuleDetail, msg types.AppNoti
 		if err != nil {
 			log.Println("插入规则记录表失败", err)
 		}
-		detail.FailedCount += 1
-		err = detail.Update()
+		newerFailedCount := detail.FailedCount + 1
+		var devUpdate = model.RuleDetail{
+			ID:          detail.ID,
+			FailedCount: newerFailedCount,
+		}
+		err = devUpdate.Update()
 		if err != nil {
 			log.Println("更新失败次数集失败", err)
 			return
@@ -102,25 +106,32 @@ func updateRecordAndResult(flag bool, detail model.RuleDetail, msg types.AppNoti
 			if err != nil {
 				log.Println("插入规则记录表失败", err)
 			}
-			detail.FailedCount = detail.FailedCount + 1
-			err = detail.Update()
+			newerFailedCount := detail.FailedCount + 1
+			var devUpdate = model.RuleDetail{
+				ID:          detail.ID,
+				FailedCount: newerFailedCount,
+			}
+			err = devUpdate.Update()
 			if err != nil {
 				log.Println("更新失败次数集失败", err)
 				return
 			}
 			return
 		}
-		detail.SuccessCount = detail.SuccessCount + 1
-		err = detail.Update()
+		newerSuccessCount := detail.SuccessCount + 1
+		var devUpdate = model.RuleDetail{
+			ID:           detail.ID,
+			SuccessCount: newerSuccessCount,
+		}
+		err = devUpdate.Update()
+		if err != nil {
+			log.Println("更新成功次数集失败", err)
+			return
+		}
 		ruleRecord.ControlPublish = constants.ControlSuccessResult
 		err = ruleRecord.Insert()
 		if err != nil {
 			log.Println("插入规则记录表失败", err)
 		}
-		if err != nil {
-			log.Println("更新成功次数集失败", err)
-			return
-		}
 	}
-
 }

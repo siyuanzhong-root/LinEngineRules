@@ -46,7 +46,12 @@ func deleteLazyData() {
 				log.Println("清理数据出错", err)
 				return
 			}
+			var e model.ExprRuleRecord
+			err = e.DeleteExpiredByName()
+			if err != nil {
+				log.Println("清理数据出错", err)
+				return
+			}
 		}
-
 	}
 }
