@@ -32,6 +32,10 @@ func dataHandler(msg []byte, topic string) {
 	log.Println("接收到Topic为:", topic, ";Data是:\n", string(msg))
 	var appMsg types.AppNoticeMsg
 	err := json.Unmarshal(msg, &appMsg)
+	_, ok := appMsg.Param["PDatlas"]
+	if ok {
+		delete(appMsg.Param, "PDatlas")
+	}
 	if err != nil {
 		log.Println("上报数据流出现问题", err)
 		return
